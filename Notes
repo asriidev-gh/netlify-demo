@@ -1,0 +1,79 @@
+https://www.netlify.com/products/dev/
+https://docs.netlify.com/cli/get-started/
+
+npm install netlify-cli -g
+netlify login
+netlify init
+
+1.) Write netlify.toml
+    Ex.
+    [build]
+        publish="dist"
+2.) Create folder and write dist/index.html
+3.) run comman: netlify init
+
+//~~~~~~ Deployment ~~~~~~//
+netlify dev
+netlify dev --live
+
+//~~~~~~ Server ~~~~~~//
+1.) Append functions to netlify.toml
+    Ex.
+    [build]
+        publish="dist"
+        functions="functions"
+
+netlify functions:create getword
+ -this will generate functions/getword
+   =http://localhost:8888/.netlify/functions/getword/getword.js
+
+Can also add to redirects
+ -'/getword/ /.netlify/functions/getword/getword.js 200'
+   =http://localhost:8888/getword
+
+To pass parameter:
+   =http://localhost:8888/getword?name=asrii
+
+Next Add random words, 
+          run npm init 
+          npm i random-words
+Then run again to see random words 
+   =http://localhost:8888/getword
+
+Next we can consume the functions
+
+1.) Write in index.html body,
+
+    <h1>Random Word: 
+        <span id="random-word"></span>
+    </h1>
+    <script src="js/main.js"></script>
+
+2.) Create the folder and write under dist/js/main.js
+
+    const getWord = async () => {
+        const res = await fetch('/getword');
+        const word = await res.json();    
+        document.getElementById('random-word').innerText = word.message;
+    }
+
+    getWord();
+
+3.) We may apply getUsers from jsonplaceholder
+
+    const getUsers = async () => {
+        const res =  await fetch('/api/users');
+        const users = await res.json();
+
+        users.forEach(user => {
+            const li = document.createElement('li');
+            const text = document.createTextNode(user.name);
+            li.appendChild(text);
+            document.getElementById('users').appendChild(li);
+        });
+    }
+
+    getUsers();
+
+4.) To deploy in the production run:
+        netlify deploy --prod
